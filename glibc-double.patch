@@ -1,0 +1,20 @@
+--- firefox-93.0/modules/fdlibm/src/math_private.h.orig	2021-09-28 00:47:42.000000000 +0200
++++ firefox-93.0/modules/fdlibm/src/math_private.h	2021-10-06 01:23:47.611144150 +0200
+@@ -20,6 +20,7 @@
+ #include <cfloat>
+ #include <stdint.h>
+ #include <sys/types.h>
++#include <math.h>
+ 
+ #include "fdlibm.h"
+ 
+@@ -30,8 +31,7 @@
+  * Adapted from https://github.com/freebsd/freebsd-src/search?q=__double_t
+  */
+ 
+-typedef double      __double_t;
+-typedef __double_t  double_t;
++typedef double_t  __double_t;
+ 
+ /*
+  * The original fdlibm code used statements like:

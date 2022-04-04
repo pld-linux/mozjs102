@@ -1,0 +1,13 @@
+--- firefox-91.7.1/python/mozbuild/mozbuild/virtualenv.py.orig	2022-04-04 19:48:54.691146163 +0200
++++ firefox-91.7.1/python/mozbuild/mozbuild/virtualenv.py	2022-04-04 20:09:51.129698210 +0200
+@@ -106,9 +106,7 @@ class VirtualenvManager(VirtualenvHelper
+     @property
+     def virtualenv_script_path(self):
+         """Path to virtualenv's own populator script."""
+-        return os.path.join(
+-            self.topsrcdir, "third_party", "python", "virtualenv", "virtualenv.py"
+-        )
++        return '/usr/bin/virtualenv-3'
+ 
+     def version_info(self):
+         return eval(

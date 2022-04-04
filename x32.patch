@@ -1,0 +1,69 @@
+--- firefox-91.7.1/build/moz.configure/init.configure.orig	2022-04-04 16:33:40.528846096 +0200
++++ firefox-91.7.1/build/moz.configure/init.configure	2022-04-04 16:35:05.058388323 +0200
+@@ -728,6 +728,8 @@ def split_triplet(triplet, allow_msvc=Fa
+         endianness = "little"
+     elif cpu in ("x86_64", "ia64"):
+         canonical_cpu = cpu
++        if os.endswith('gnux32'):
++            canonical_cpu = 'x32'
+         endianness = "little"
+     elif cpu in ("s390", "s390x"):
+         canonical_cpu = cpu
+--- firefox-60.7.0/mfbt/RandomNum.cpp.orig	2019-05-24 22:04:38.196451155 +0200
++++ firefox-60.7.0/mfbt/RandomNum.cpp	2019-05-24 22:10:43.717804289 +0200
+@@ -58,7 +58,9 @@
+ 
+ // Older glibc versions don't define SYS_getrandom, so we define it here if
+ // it's not available. See bug 995069.
+-#  if defined(__x86_64__)
++#  if defined(__x86_64__) && defined(__ILP32__)
++#    define GETRANDOM_NR (__X32_SYSCALL_BIT + 318)
++#  elif defined(__x86_64__)
+ #    define GETRANDOM_NR 318
+ #  elif defined(__i386__)
+ #    define GETRANDOM_NR 355
+--- firefox-91.7.1/python/mozbuild/mozbuild/configure/constants.py.orig	2022-04-04 16:33:42.568845879 +0200
++++ firefox-91.7.1/python/mozbuild/mozbuild/configure/constants.py	2022-04-04 16:44:51.148857314 +0200
+@@ -60,6 +60,7 @@ CPU_bitness = {
+     "sparc64": 64,
+     "x86": 32,
+     "x86_64": 64,
++    "x32": 32,
+     "wasm32": 32,
+ }
+ 
+@@ -78,8 +79,9 @@ WindowsBinaryType = EnumString.subclass(
+ # The order of those checks matter
+ CPU_preprocessor_checks = OrderedDict(
+     (
++        ("x32", "__x86_64__ && __ILP32__"),
+         ("x86", "__i386__ || _M_IX86"),
+-        ("x86_64", "__x86_64__ || _M_X64"),
++        ("x86_64", "(__x86_64__ && __LP64__) || _M_X64"),
+         ("arm", "__arm__ || _M_ARM"),
+         ("aarch64", "__aarch64__ || _M_ARM64"),
+         ("ia64", "__ia64__"),
+--- firefox-68.7.0/js/src/vm/BigIntType.cpp~	2020-04-03 21:29:59.000000000 +0200
++++ firefox-68.7.0/js/src/vm/BigIntType.cpp	2020-05-01 11:22:53.296439915 +0200
+@@ -263,7 +263,7 @@
+ BigInt::Digit BigInt::digitDiv(Digit high, Digit low, Digit divisor,
+                                Digit* remainder) {
+   MOZ_ASSERT(high < divisor, "division must not overflow");
+-#if defined(__x86_64__)
++#if defined(__x86_64__) && !defined(__ILP32__)
+   Digit quotient;
+   Digit rem;
+   __asm__("divq  %[divisor]"
+--- firefox-91.7.1/js/src/gc/GC.cpp.orig	2022-04-04 16:32:41.617512402 +0200
++++ firefox-91.7.1/js/src/gc/GC.cpp	2022-04-04 16:45:29.361453166 +0200
+@@ -303,8 +303,10 @@ static_assert(js::detail::LIFO_ALLOC_ALI
+               "CellFlagBitsReservedForGC should support LifoAlloc");
+ static_assert(CellAlignBytes >= MinFirstWordAlignment,
+               "CellFlagBitsReservedForGC should support gc::Cell");
++#ifndef JS_CODEGEN_NONE
+ static_assert(js::jit::CodeAlignment >= MinFirstWordAlignment,
+               "CellFlagBitsReservedForGC should support JIT code");
++#endif
+ static_assert(js::gc::JSClassAlignBytes >= MinFirstWordAlignment,
+               "CellFlagBitsReservedForGC should support JSClass pointers");
+ static_assert(js::ScopeDataAlignBytes >= MinFirstWordAlignment,
