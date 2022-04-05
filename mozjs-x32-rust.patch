@@ -1,19 +1,31 @@
---- firefox-78.2.0/build/moz.configure/rust.configure.orig	2020-08-17 20:33:34.000000000 +0200
-+++ firefox-78.2.0/build/moz.configure/rust.configure	2020-10-07 18:29:15.458050574 +0200
-@@ -406,16 +406,6 @@
- rust_host_triple = rust_triple_alias(host, host_c_compiler)
- 
- 
--@depends(host, rust_host_triple, rustc_info.host)
--def validate_rust_host_triple(host, rust_host, rustc_host):
--    if rust_host != rustc_host:
--        if host.alias == rust_host:
+--- firefox-91.7.1/build/moz.configure/rust.configure.orig	2022-03-13 15:31:36.000000000 +0100
++++ firefox-91.7.1/build/moz.configure/rust.configure	2022-04-05 18:19:56.821912735 +0200
+@@ -462,28 +462,6 @@ def rust_host_triple(
+     rustc_target = detect_rustc_target(
+         host, compiler_info, arm_target, rust_supported_targets
+     )
+-    if rustc_target != rustc_host:
+-        if host.alias == rustc_target:
 -            configure_host = host.alias
 -        else:
--            configure_host = '{}/{}'.format(host.alias, rust_host)
--        die("The rust compiler host ({}) is not suitable for the configure host ({})."
--            .format(rustc_host, configure_host))
+-            configure_host = "{}/{}".format(host.alias, rustc_target)
+-        die(
+-            dedent(
+-                """\
+-        The rust compiler host ({rustc}) is not suitable for the configure host ({configure}).
 -
+-        You can solve this by:
+-        * Set your configure host to match the rust compiler host by editing your
+-        mozconfig and adding "ac_add_options --host={rustc}".
+-        * Or, install the rust toolchain for {configure}, if supported, by running
+-        "rustup default stable-{rustc_target}"
+-        """.format(
+-                    rustc=rustc_host,
+-                    configure=configure_host,
+-                    rustc_target=rustc_target,
+-                )
+-            )
+-        )
+     assert_rust_compile(host, rustc_target, rustc)
+     return rustc_target
  
- set_config('RUST_TARGET', rust_target_triple)
- set_config('RUST_HOST_TARGET', rust_host_triple)
