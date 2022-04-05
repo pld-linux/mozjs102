@@ -67,3 +67,14 @@
  static_assert(js::gc::JSClassAlignBytes >= MinFirstWordAlignment,
                "CellFlagBitsReservedForGC should support JSClass pointers");
  static_assert(js::ScopeDataAlignBytes >= MinFirstWordAlignment,
+--- firefox-91.7.1/js/src/wasm/WasmFrame.h.orig	2022-03-13 15:31:41.000000000 +0100
++++ firefox-91.7.1/js/src/wasm/WasmFrame.h	2022-04-05 19:49:49.624104638 +0200
+@@ -230,7 +230,7 @@ class DebugFrame {
+   // Avoid -Wunused-private-field warnings.
+  protected:
+ #if defined(JS_CODEGEN_MIPS32) || defined(JS_CODEGEN_ARM) || \
+-    defined(JS_CODEGEN_X86) || defined(__wasi__)
++    defined(JS_CODEGEN_X86) || defined(__wasi__) || (defined(JS_CODEGEN_NONE) && defined(__ILP32__))
+   // See alignmentStaticAsserts().  For MIPS32, ARM32 and X86 DebugFrame is only
+   // 4-byte aligned, so we add another word to get up to 8-byte
+   // alignment.
