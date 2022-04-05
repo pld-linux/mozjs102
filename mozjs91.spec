@@ -80,7 +80,7 @@ Pliki nagłówkowe do biblioteki JavaScript.
 %patch2 -p1
 %patch3 -p1
 %ifarch x32
-%patch4 -p1
+#%patch4 -p1
 %endif
 %patch5 -p1
 
