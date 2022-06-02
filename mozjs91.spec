@@ -6,7 +6,7 @@ Summary:	SpiderMonkey 91 - JavaScript implementation
 Summary(pl.UTF-8):	SpiderMonkey 91 - implementacja języka JavaScript
 Name:		mozjs91
 Version:	91.7.1
-Release:	1
+Release:	2
 License:	MPL v2.0
 Group:		Libraries
 #Source0:	http://ftp.gnome.org/pub/gnome/teams/releng/tarballs-needing-help/mozjs/mozjs-%{version}.tar.bz2
