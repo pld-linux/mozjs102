@@ -2,16 +2,16 @@
 # Conditional build:
 %bcond_without	tests	# tests build
 
-Summary:	SpiderMonkey 91 - JavaScript implementation
-Summary(pl.UTF-8):	SpiderMonkey 91 - implementacja języka JavaScript
-Name:		mozjs91
-Version:	91.7.1
-Release:	2
+Summary:	SpiderMonkey 102 - JavaScript implementation
+Summary(pl.UTF-8):	SpiderMonkey 102 - implementacja języka JavaScript
+Name:		mozjs102
+Version:	102.5.0
+Release:	1
 License:	MPL v2.0
 Group:		Libraries
-#Source0:	http://ftp.gnome.org/pub/gnome/teams/releng/tarballs-needing-help/mozjs/mozjs-%{version}.tar.bz2
+#Source0:	https://download.gnome.org/teams/releng/tarballs-needing-help/mozjs/mozjs-%{version}.tar.xz
 Source0:	https://ftp.mozilla.org/pub/firefox/releases/%{version}esr/source/firefox-%{version}esr.source.tar.xz
-# Source0-md5:	5bed22ca5921850b0fe250c512945f6f
+# Source0-md5:	3b3e610898ccda554519f744e634c50c
 Patch0:		copy-headers.patch
 Patch1:		system-virtualenv.patch
 Patch2:		include-configure-script.patch
@@ -27,7 +27,7 @@ BuildRequires:	libicu-devel >= 67.1
 BuildRequires:	libstdc++-devel >= 6:7
 BuildRequires:	llvm
 BuildRequires:	m4 >= 1.1
-BuildRequires:	nspr-devel >= 4.26
+BuildRequires:	nspr-devel >= 4.32
 BuildRequires:	perl-base >= 1:5.6
 BuildRequires:	pkgconfig
 BuildRequires:	python3 >= 1:3.8.5-3
@@ -36,11 +36,11 @@ BuildRequires:	readline-devel
 BuildRequires:	rpm-perlprov
 BuildRequires:	rpmbuild(macros) >= 1.294
 BuildRequires:	rust >= 1.51.0
-BuildRequires:	rust-cbindgen >= 0.19.0
+BuildRequires:	rust-cbindgen >= 0.23.0
 BuildRequires:	tar >= 1:1.22
 BuildRequires:	xz
 BuildRequires:	zlib-devel >= 1.2.3
-Requires:	nspr >= 4.26
+Requires:	nspr >= 4.32
 Requires:	zlib >= 1.2.3
 ExclusiveArch:	%{x8664} %{ix86} x32 aarch64 armv6hl armv7hl armv7hnl
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -65,7 +65,7 @@ Summary(pl.UTF-8):	Pliki nagłówkowe do biblioteki JavaScript
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	libstdc++-devel
-Requires:	nspr-devel >= 4.25
+Requires:	nspr-devel >= 4.32
 
 %description devel
 Header files for JavaScript reference library.
@@ -137,11 +137,11 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(644,root,root,755)
 %doc js/src/README.html
-%attr(755,root,root) %{_bindir}/js91
-%attr(755,root,root) %{_libdir}/libmozjs-91.so
+%attr(755,root,root) %{_bindir}/js102
+%attr(755,root,root) %{_libdir}/libmozjs-102.so
 
 %files devel
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_bindir}/js91-config
-%{_includedir}/mozjs-91
-%{_pkgconfigdir}/mozjs-91.pc
+%attr(755,root,root) %{_bindir}/js102-config
+%{_includedir}/mozjs-102
+%{_pkgconfigdir}/mozjs-102.pc
