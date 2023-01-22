@@ -54,3 +54,77 @@
    Digit quotient;
    Digit rem;
    __asm__("divq  %[divisor]"
+--- firefox-102.5.0/js/src/jit/GenerateAtomicOperations.py.orig	2022-11-07 22:06:45.000000000 +0100
++++ firefox-102.5.0/js/src/jit/GenerateAtomicOperations.py	2023-01-21 21:11:44.361987341 +0100
+@@ -18,7 +18,7 @@ def fmt_insn(s):
+ 
+ 
+ def gen_seqcst(fun_name):
+-    if cpu_arch in ("x86", "x86_64"):
++    if cpu_arch in ("x86", "x86_64", "x32"):
+         return r"""
+             INLINE_ATTR void %(fun_name)s() {
+                 asm volatile ("mfence\n\t" ::: "memory");
+@@ -48,7 +48,7 @@ def gen_load(fun_name, cpp_type, size, b
+     # - LIRGenerator::visitLoadUnboxedScalar
+     # - CodeGenerator::visitAtomicLoad64 (on 64-bit platforms)
+     # - MacroAssembler::wasmLoad
+-    if cpu_arch in ("x86", "x86_64"):
++    if cpu_arch in ("x86", "x86_64", "x32"):
+         insns = ""
+         if barrier:
+             insns += fmt_insn("mfence")
+@@ -139,7 +139,7 @@ def gen_store(fun_name, cpp_type, size,
+     # - LIRGenerator::visitStoreUnboxedScalar
+     # - CodeGenerator::visitAtomicStore64 (on 64-bit platforms)
+     # - MacroAssembler::wasmStore
+-    if cpu_arch in ("x86", "x86_64"):
++    if cpu_arch in ("x86", "x86_64", "x32"):
+         insns = ""
+         if barrier:
+             insns += fmt_insn("mfence")
+@@ -222,7 +222,7 @@ def gen_exchange(fun_name, cpp_type, siz
+     # NOTE: the assembly code must match the generated code in:
+     # - MacroAssembler::atomicExchange
+     # - MacroAssembler::atomicExchange64 (on 64-bit platforms)
+-    if cpu_arch in ("x86", "x86_64"):
++    if cpu_arch in ("x86", "x86_64", "x32"):
+         # Request an input/output register for `val` so that we can simply XCHG it
+         # with *addr.
+         insns = ""
+@@ -368,7 +368,7 @@ def gen_cmpxchg(fun_name, cpp_type, size
+             "cpp_type": cpp_type,
+             "fun_name": fun_name,
+         }
+-    if cpu_arch in ("x86", "x86_64"):
++    if cpu_arch in ("x86", "x86_64", "x32"):
+         # Use a +a constraint to load `oldval` into RAX as input/output register.
+         insns = ""
+         if size == 8:
+@@ -488,7 +488,7 @@ def gen_fetchop(fun_name, cpp_type, size
+     # NOTE: the assembly code must match the generated code in:
+     # - MacroAssembler::atomicFetchOp
+     # - MacroAssembler::atomicFetchOp64 (on 64-bit platforms)
+-    if cpu_arch in ("x86", "x86_64"):
++    if cpu_arch in ("x86", "x86_64", "x32"):
+         # The `add` operation can be optimized with XADD.
+         if op == "add":
+             insns = ""
+@@ -645,7 +645,7 @@ def gen_copy(fun_name, cpp_type, size, u
+         offset = unroll - 1
+     insns = ""
+     for i in range(unroll):
+-        if cpu_arch in ("x86", "x86_64"):
++        if cpu_arch in ("x86", "x86_64", "x32"):
+             if size == 1:
+                 insns += fmt_insn("movb OFFSET(%[src]), %[scratch]")
+                 insns += fmt_insn("movb %[scratch], OFFSET(%[dst])")
+@@ -721,7 +721,7 @@ namespace jit {
+ 
+ def generate_atomics_header(c_out):
+     contents = ""
+-    if cpu_arch in ("x86", "x86_64", "aarch64") or (
++    if cpu_arch in ("x86", "x86_64", "x32", "aarch64") or (
+         cpu_arch == "arm" and int(buildconfig.substs["ARM_ARCH"]) >= 7
+     ):
+         contents += "#define JS_HAVE_GENERATED_ATOMIC_OPS 1"
