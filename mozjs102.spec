@@ -5,13 +5,13 @@
 Summary:	SpiderMonkey 102 - JavaScript implementation
 Summary(pl.UTF-8):	SpiderMonkey 102 - implementacja języka JavaScript
 Name:		mozjs102
-Version:	102.5.0
-Release:	2
+Version:	102.11.0
+Release:	1
 License:	MPL v2.0
 Group:		Libraries
 #Source0:	https://download.gnome.org/teams/releng/tarballs-needing-help/mozjs/mozjs-%{version}.tar.xz
 Source0:	https://ftp.mozilla.org/pub/firefox/releases/%{version}esr/source/firefox-%{version}esr.source.tar.xz
-# Source0-md5:	3b3e610898ccda554519f744e634c50c
+# Source0-md5:	482fb76836d2fcd16642a9c84e12bfb9
 Patch0:		copy-headers.patch
 Patch1:		system-virtualenv.patch
 Patch2:		include-configure-script.patch
